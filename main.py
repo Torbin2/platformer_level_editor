@@ -51,7 +51,10 @@ while True:
             exit()
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_p:
-                print(num_list)
+                print_list = []
+                for i in num_list:
+                    print_list.append(i.type)
+                print(f"[{print_list}]")
             if int(event.key) in range(48, 58):
                 key_press = [True,int(event.key)-48]
             else: print("keyboard issue")
