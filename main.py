@@ -3,11 +3,13 @@ from sys import exit
 
 
 pygame.init()
-screen = pygame.display.set_mode((1200,600))
+screen = pygame.Surface((1200,1200))
+real_screen = pygame.display.set_mode((1200,600))
 pygame.display.set_caption('platformer level editor')
 clock = pygame.time.Clock()
 selected_rect = 0
 key_press = [False,0]
+offset = 0
 
 
 class Block:
@@ -37,11 +39,11 @@ def colour(num):
 def mous():
     global selected_rect
     mouse_pos = pygame.mouse.get_pos()
-    selected_rect = mouse_pos[0]//100 + (mouse_pos[1] // 100) *12
+    selected_rect = mouse_pos[0]//100 + (mouse_pos[1] // 100) *12 + (offset //100) *12
 
 
 num_list = []
-for i in range(72):
+for i in range(144):
     num_list.append(Block(i))
 
 while True:
@@ -51,11 +53,20 @@ while True:
             exit()
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_p:
-                print_list = []
+                print_list = '['
                 for i in num_list:
-                    print_list.append(i.type)
-                print(f"[{print_list}]")
-            if int(event.key) in range(48, 58):
+                    print_list += (str(i.type) + ", ")
+                    if i.num % 12 == 11 :
+                        print_list += ("8, \n")
+                print(print_list + "],")
+            elif event.key == pygame.K_l:
+                if offset != 600:
+                    offset +=100
+            elif event.key == pygame.K_o:
+                if offset != 0:
+                    offset -=100
+            
+            elif int(event.key) in range(48, 58):
                 key_press = [True,int(event.key)-48]
             else: print("keyboard issue")
         if event.type == pygame.KEYUP:
@@ -68,6 +79,6 @@ while True:
         num_list[selected_rect].type = key_press[1]
     for rect in num_list:
         rect.update()
-
+    real_screen.blit(screen, (0, 0 - offset))
     pygame.display.update()
     clock.tick(60)
